@@ -7,6 +7,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.tasks.injection.ApplicationScope
+import org.tasks.preferences.Preferences
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -14,12 +15,17 @@ import javax.inject.Inject
 class NotificationClearedReceiver : BroadcastReceiver() {
     @Inject lateinit var notificationManager: NotificationManager
     @Inject @ApplicationScope lateinit var scope: CoroutineScope
+    @Inject lateinit var preferences: Preferences
 
     override fun onReceive(context: Context, intent: Intent) {
         val notificationId = intent.getLongExtra(NotificationManager.EXTRA_NOTIFICATION_ID, -1L)
         Timber.d("cleared $notificationId")
         scope.launch {
-            notificationManager.cancel(notificationId)
+            if (preferences.usePersistentReminders()) {
+                notificationManager.restoreNotifications(false)
+            } else {
+                notificationManager.cancel(notificationId)
+            }
         }
     }
 }
