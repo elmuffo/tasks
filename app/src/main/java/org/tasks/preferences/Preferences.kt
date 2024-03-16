@@ -465,7 +465,7 @@ class Preferences @JvmOverloads constructor(
     fun bundleNotifications(): Boolean = getBoolean(R.string.p_bundle_notifications, true)
 
     fun usePersistentReminders(): Boolean =
-        AndroidUtilities.preUpsideDownCake() && getBoolean(R.string.p_rmd_persistent, true)
+        getBoolean(R.string.p_rmd_persistent, true)
 
     var isSyncOngoing: Boolean
         get() = syncFlags.any { getBoolean(it, false) }
